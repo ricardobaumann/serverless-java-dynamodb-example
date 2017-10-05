@@ -12,6 +12,7 @@ service: serverless-rating # NOTE: update this with your service name
 provider:
   name: aws
   runtime: java8
+  region: eu-west-1
 
 package:
   artifact: build/distributions/rating.zip
@@ -31,34 +32,3 @@ functions:
             path: rating
             method: post
             cors: true
-
-resources:
-  Resources:
-    DynamoDbTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: serverless
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-    DynamoDBIamPolicy:
-      Type: AWS::IAM::Policy
-      DependsOn: DynamoDbTable
-      Properties:
-        PolicyName: lambda-dynamodb
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-            - Effect: Allow
-              Action:
-                - dynamodb:GetItem
-                - dynamodb:PutItem
-              Resource: arn:aws:dynamodb:*:*:table/serverless
-        Roles:
-          - Ref: IamRoleLambdaExecution
